@@ -1,2 +1,2 @@
 # SightBit
-SightBIt app using web sockets and werRTC 
+SightBIt app using web sockets and webRTC 
