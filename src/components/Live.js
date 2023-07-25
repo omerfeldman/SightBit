@@ -3,19 +3,18 @@ import axios from 'axios';
 
 const Live = () => {
 
-
     const streamEncoder = useRef(null);
     const streamUrl = useRef(null);
     const [urlLoaded, setUrlLoaded] = useState(false)
 
     useEffect(() => {
 
+        //fetching the data from the DB
         axios.get('http://localhost:5000/stream/beach1')
             .then(response => {
                 const data = response.data;
                 streamEncoder.current = btoa(data.stream.username + ":" + data.stream.password);
                 streamUrl.current = data.stream.live_stream_url
-                console.log(streamUrl.current)
                 setUrlLoaded(true)
             })
             .catch(error => {
@@ -107,7 +106,6 @@ const Live = () => {
 
         const start = () => {
             console.log("requesting ICE servers");
-            console.log(streamUrl.current)
             fetch(new URL('whep', streamUrl.current + "/"), {
                 method: 'OPTIONS',
             })
@@ -142,10 +140,7 @@ const Live = () => {
         const onLocalOffer = (offer) => {
             offerData = parseOffer(offer.sdp);
             pc.setLocalDescription(offer);
-
             console.log("sending offer");
-            console.log(streamEncoder.current)
-
             fetch(new URL('whep', streamUrl.current + "/"), {
                 method: 'POST',
                 headers: {
@@ -263,7 +258,7 @@ const Live = () => {
                 pc.close();
             }
         };
-    }, [streamEncoder, urlLoaded]);
+    }, [urlLoaded]);
 
     return (
         <div>

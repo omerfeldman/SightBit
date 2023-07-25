@@ -2,13 +2,9 @@ const request = require('supertest');
 const { app, server } = require('./server');
 const mongoose = require('mongoose');
 
-// describe('Test the root path', () => {
-//     test('It should response the GET method', async () => {
-//         const response = await request(app).get('/');
-//         expect(response.statusCode).toBe(200);
-//     });
-// });
 
+// Function to generate a random string
+// Used for creating unique stream IDs in tests
 function generateRandomString(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -20,6 +16,7 @@ function generateRandomString(length) {
 
 describe('Test stream path', () => {
     
+    // Test case for POST method
     test('It should response the POST method', async () => {
         const response = await request(app)
             .post('/stream')
@@ -32,12 +29,14 @@ describe('Test stream path', () => {
         expect(response.statusCode).toBe(200);
     });
 
+    // Test case for GET method
     test('It should response the GET method', async () => {
         const response = await request(app).get('/stream/beach1');
         expect(response.statusCode).toBe(200);
     });
 });
 
+// Closing the mongoose connection and server after all tests are run
 afterAll(async () => {
     await new Promise(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
     await mongoose.connection.close();

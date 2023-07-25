@@ -11,7 +11,7 @@ const EventTable = () => {
   useEffect(() => {
      const socket = io('http://localhost:5000');
 
-       //mock for checking other posts from different
+       //mock for checking other posts from different services
        const postData = async () => {
         try {
           const objectsToPost = [
@@ -42,12 +42,18 @@ const EventTable = () => {
     postData();
   //recieve data from other backend services
   socket.on('message-services', (message) => {
-     console.log(message);
+    console.log(message);
      message.forEach(obj => {
-      setRows(prevRows => [...prevRows, obj]);
+      setRows(prevRows => {
+        if (!prevRows.some(row => row.id === obj.id)) {
+          // If the row id is not found in the current state, add the new object.
+          return [...prevRows, obj];
+        }
+        return prevRows;
+      });
     });
   });
-
+  
     // Clean up when unmounting
     return () => {
       socket.off('message-services');
@@ -66,6 +72,7 @@ const EventTable = () => {
         return '';
     }
   }
+  
   
   const columns = [
     {

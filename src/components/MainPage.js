@@ -4,6 +4,7 @@ import EventTable from "./EventTable";
 import logo from '../sightbit.jpg'; 
 function MainPage() {
   return (
+    
     <div style={{ backgroundColor: '#778899', color: 'white', minHeight: '100vh', minWidth: '100vw' }}>
       <div style={{
         display: 'flex',

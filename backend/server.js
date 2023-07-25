@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 // Connection string to MongoDB
 const connectionString = 'mongodb+srv://back1:bEL1SnG5VbLEJWOm@media-test.bdyppol.mongodb.net';
 
+
 // Connect to MongoDB
 mongoose.connect(connectionString, {
   useNewUrlParser: true,
@@ -41,7 +42,9 @@ const mockUser = {
 };
 
 function mockJWT(req, res, next) {
-  req.user = mockUser; // We always attach the mockUser to the request
+ const token = req.cookies.token;  //takes the token from the cookies in the request
+ const user = jwt.verify(token, process.env.MY_SECRET) // varifiying if the token match the secret
+  req.user = mockUser; 
   next(); // Proceed to the next middleware or request handler
 }
 
@@ -49,7 +52,7 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PATCH');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true'); // Add this line for handling cookies
+  res.setHeader('Access-Control-Allow-Credentials', 'true'); // Add this line for handling cookies and SSL certificates
   next();
 });
 
@@ -59,9 +62,11 @@ app.get('/stream/:id', mockJWT, async (req, res) => {
     if (!stream) return res.status(404).send('No stream found with the provided ID.');
 
     // Send the stream data along with the authentication message and user data
-
+console.log(stream);
     res.json({
       message: 'You are authenticated!',
+
+      //same values just for showing the mock authentication 
       user: req.user,
       stream: stream
     });
@@ -74,6 +79,7 @@ app.get('/stream/:id', mockJWT, async (req, res) => {
 
 });
 
+//posting a mock stream data
 app.post('/stream', async (req, res) => {
   try {
     const { id } = req.body;
@@ -81,7 +87,7 @@ app.post('/stream', async (req, res) => {
     // Check if a stream with the given ID already exists
     const existingStream = await Stream.findOne({ id });
     if (existingStream) return res.status(400).send('Stream with the provided ID already exists.');
-
+    
     // Create a new stream
     const newStream = new Stream({
       id: mockUser.id,
@@ -113,17 +119,13 @@ const io = socketIo(server, {
   },
 });
 
-app.post('/event', (req, res) => {
-
-});
-
 let savedData = null;
 
+//recieve post data from different services
 app.post('/event1', (req, res) => {
   const eventData = req.body;
   savedData = eventData;
   console.log("Saved data: ", savedData);
-  io.emit('message-services', savedData);
   res.status(200).send();
 
 });
