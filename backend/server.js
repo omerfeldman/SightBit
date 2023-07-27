@@ -42,8 +42,8 @@ const mockUser = {
 };
 
 function mockJWT(req, res, next) {
- const token = req.cookies.token;  //takes the token from the cookies in the request
- const user = jwt.verify(token, process.env.MY_SECRET) // varifiying if the token match the secret
+ //const token = req.cookies.token;  //takes the token from the cookies in the request
+ //const user = jwt.verify(token, process.env.MY_SECRET) // varifiying if the token match the secret
   req.user = mockUser; 
   next(); // Proceed to the next middleware or request handler
 }

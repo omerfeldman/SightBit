@@ -258,7 +258,7 @@ const Live = () => {
                 pc.close();
             }
         };
-    }, [urlLoaded]);
+    }, [streamEncoder, urlLoaded]);
 
     return (
         <div>
